@@ -1,145 +1,116 @@
 // Countdown Timer
-function updateCountdown() {
-    const birthDate = new Date('2026-03-25T00:00:00').getTime();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Tanu ✨</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="confetti"></canvas>
+    <div class="stars"></div>
     
-    const interval = setInterval(() => {
-        const now = new Date().getTime();
-        const distance = birthDate - now;
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="title">Happy Birthday</h1>
+            <p class="subtitle-cutie">Cutie</p>
+            <p class="date-text">Tanu Singh</p>
+            
+            <div class="countdown" id="countdown">
+                <div class="countdown-item">
+                    <span class="countdown-value" id="days">0</span>
+                    <span class="countdown-label">Days</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="hours">0</span>
+                    <span class="countdown-label">Hours</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="minutes">0</span>
+                    <span class="countdown-label">Minutes</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="seconds">0</span>
+                    <span class="countdown-label">Seconds</span>
+                </div>
+            </div>
+        </div>
         
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        
-        document.getElementById('days').textContent = String(days).padStart(2, '0');
-        document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-        document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-        
-        if (distance < 0) {
-            clearInterval(interval);
-            document.getElementById('countdown').innerHTML = '<h2>Happy Birthday Tanu! 🎉</h2>';
-        }
-    }, 1000);
-}
+        <div class="scroll-indicator">
+            <span>📱 Scroll for more ⬇️</span>
+        </div>
+    </section>
 
-// Confetti Animation
-class Confetti {
-    constructor(canvas) {
-        this.canvas = canvas;
-        this.ctx = canvas.getContext('2d');
-        this.particles = [];
-        this.animationId = null;
-        
-        this.resize();
-        window.addEventListener('resize', () => this.resize());
-    }
-    
-    resize() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-    }
-    
-    createParticles(x, y) {
-        const colors = ['#ffd700', '#ff6b9d', '#4ecdc4', '#45b7d1', '#ff9ff3', '#54a0ff', '#ff1493', '#00ff88'];
-        const particleCount = 50;
-        
-        for (let i = 0; i < particleCount; i++) {
-            this.particles.push({
-                x: x,
-                y: y,
-                vx: (Math.random() - 0.5) * 10,
-                vy: (Math.random() - 0.5) * 10 - 2,
-                life: 1,
-                size: Math.random() * 5 + 2,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                rotation: Math.random() * Math.PI * 2
-            });
-        }
-    }
-    
-    update() {
-        this.particles = this.particles.filter(p => p.life > 0);
-        
-        this.particles.forEach(p => {
-            p.x += p.vx;
-            p.y += p.vy;
-            p.vy += 0.2; // gravity
-            p.life -= 0.02;
-            p.rotation += 0.1;
-        });
-    }
-    
-    draw() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        this.particles.forEach(p => {
-            this.ctx.save();
-            this.ctx.globalAlpha = p.life;
-            this.ctx.fillStyle = p.color;
-            this.ctx.translate(p.x, p.y);
-            this.ctx.rotate(p.rotation);
-            this.ctx.beginPath();
-            this.ctx.arc(0, 0, p.size, 0, Math.PI * 2);
-            this.ctx.fill();
-            this.ctx.restore();
-        });
-    }
-    
-    animate() {
-        this.update();
-        this.draw();
-        
-        if (this.particles.length > 0) {
-            this.animationId = requestAnimationFrame(() => this.animate());
-        }
-    }
-    
-    burst(x, y) {
-        this.createParticles(x, y);
-        
-        if (!this.animationId) {
-            this.animate();
-        }
-    }
-}
+    <section class="music-section">
+        <div class="container">
+            <div class="music-player">
+                <h3>🎵 Your Special Song</h3>
+                <audio id="audioPlayer" controls autoplay>
+                    <source src="song.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </div>
+    </section>
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    updateCountdown();
-    
-    const canvas = document.getElementById('confetti');
-    const confetti = new Confetti(canvas);
-    
-    document.addEventListener('click', (e) => {
-        confetti.burst(e.clientX, e.clientY);
-    });
-    
-    // Smooth scroll animations
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px'
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.animation = 'fadeInUp 0.8s ease-out';
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-    
-    document.querySelectorAll('.wish-card').forEach(card => {
-        observer.observe(card);
-    });
-});
+    <section class="wishes">
+        <div class="container">
+            <h2>Special Wishes for You</h2>
+            
+            <div class="wish-cards">
+                <div class="wish-card">
+                    <div class="wish-icon">🌟</div>
+                    <h3>Radha Ji Blesses You</h3>
+                    <p>May the divine grace of Radha Ji shower upon you with love, wisdom, and eternal joy. May your path be illuminated with prosperity and endless blessings.</p>
+                </div>
+                
+                <div class="wish-card">
+                    <div class="wish-icon">🔥</div>
+                    <h3>Do What Sets Your Soul On Fire</h3>
+                    <p>You have the courage to dream big and the brilliance to achieve it. Keep pursuing your passions fearlessly - the world needs your incredible fire and energy!</p>
+                </div>
+                
+                <div class="wish-card">
+                    <div class="wish-icon">🎓</div>
+                    <h3>Brilliant & Unstoppable</h3>
+                    <p>From a childhood topper to an extraordinary achiever - your dedication, intelligence, and hard work inspire everyone around you. Your success is only the beginning!</p>
+                </div>
+                
+                <div class="wish-card">
+                    <div class="wish-icon">✨</div>
+                    <h3>Mysterious & Magical</h3>
+                    <p>There's something beautifully enigmatic about you - your quiet strength, your mysterious charm, and the wisdom you carry makes you truly unforgettable.</p>
+                </div>
 
-// Auto-play music
-document.addEventListener('DOMContentLoaded', () => {
-    const audio = document.getElementById('audioPlayer');
-    if (audio) {
-        audio.volume = 0.5; // 50% volume
-        // Auto-play might be blocked by browser, user will need to click play
-    }
-});
+                <div class="wish-card">
+                    <div class="wish-icon">💪</div>
+                    <h3>Hardest Working Soul</h3>
+                    <p>Your determination knows no bounds. Every goal you set, you conquer with grace. Your discipline and work ethic are truly admirable - keep shining brighter every day!</p>
+                </div>
+
+                <div class="wish-card">
+                    <div class="wish-icon">👑</div>
+                    <h3>Rise Higher</h3>
+                    <p>You deserve all the success in the world. Your intelligence, beauty, ambition, and kind heart make you truly special. Keep being your amazing authentic self!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="message">
+        <div class="container">
+            <div class="message-box">
+                <p class="message-text">"You are not just smart, you are unstoppable. You are not just hardworking, you are inspiring. You are not just beautiful, you are unforgettable."</p>
+                <p class="message-author">— Happy 20th Birthday, Tanu! 🎂✨</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Birthday Wishes | Made with <span class="heart">❤️</span></p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
